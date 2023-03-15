@@ -8,7 +8,7 @@ void main(){
 	
 	int N;							//Number of Integers
 	
-	N=500000;
+	N=100000;
 	
 							//generating an unsorted array
 	time_t timer;
@@ -65,7 +65,7 @@ void insertionSort(unsigned long int unsortedArr[], int N){
 	
 	
 	
-	printf("\n\n||The running time is %f", cpu_time_used);
+	printf("\n\n||The running time is %.10lf", cpu_time_used);
     
 	
 }
