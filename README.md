@@ -26,6 +26,6 @@ Indexing as follows:
 The parameters of the algoroithms are the 2D array and the N (num of integers)
 Format as follows:
 
-void insertionSort(unsigned long int (*sortedArr)[0], int N);
+void insertionSort(unsigned long int (*sortedArr)[6], int N);
 
 The program outputs a .txt file containing the unsorted values and the 6 sorted arrays.
