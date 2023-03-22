@@ -3,11 +3,11 @@
 
 Analysis of the six sorting algorithms. With the number of integers:
 
-10
-100
-1000
-100000
-1000000
+<br/>10
+<br/>100
+<br/>1000
+<br/>100000
+<br/>1000000
 
 Using a random generated integers, and an already sorted array
 
@@ -15,13 +15,13 @@ The program will generate an unsorted array and will then be copied to a 2D arra
 to be used by the 6 algorithms.
 
 Indexing as follows:
-
-sortedArr[][0] = Insertion sort
-sortedArr[][1] = Bubble Sort
-sortedArr[][2] = Selection Sort
-sortedArr[][3] = Mergesort
-sortedArr[][4] = Quicksort
-sortedArr[][5] = Heapsort
+<br/>
+<br/>sortedArr[][0] = Insertion sort
+<br/>sortedArr[][1] = Bubble Sort
+<br/>sortedArr[][2] = Selection Sort
+<br/>sortedArr[][3] = Mergesort
+<br/>sortedArr[][4] = Quicksort
+<br/>sortedArr[][5] = Heapsort
 
 The parameters of the algoroithms are the 2D array and the N (num of integers)
 Format as follows:
