@@ -14,18 +14,17 @@ int main(){
 	
 	int N;							//Number of Integers
 	N=10000;
-	int r;
+	int r, i, j;
 	clock_t start, end;
 	double cpu_time_used;
-	unsigned long int sortedArr[N][6];          
+	unsigned long int sortedArr[N][6];
+	unsigned long int max = ULONG_MAX;
+	unsigned long int unsortedArr[N];          
 	double runningTime[6];
-	FILE output;
+	FILE* output;
+	
 											//generating an unsorted array
 
-	int i;
-	int j;
-	unsigned long int max = ULONG_MAX;
-	unsigned long int unsortedArr[N];
 	//As of 3/15/2023, the maximum input is 500,000 without the use of static
 	//unsigned long static int v[1000000] should be used for 1 million integers
 	
@@ -34,27 +33,58 @@ int main(){
 		unsortedArr[i] = (rand()% max + 1);
 	}
 	
-							//copying unsorted array to the 2D array
+										//copying unsorted array to the 2D array to be used by the 6 sorting algorithms
 	for(i=0; i<N; i++){
 		for(j=0; j<6; j++){
 			sortedArr[i][j] = unsortedArr[i];
 		}
 	}
 	
+	output = fopen("out.txt", "w");
+	fprintf(output, "Unsorted array using random generated values\n\n");
+	for(i=1; i<N+1; i++){
+		fprintf(output, "%d ", unsortedArr[i-1]);
+		if(i%50==0){
+			fprintf(output, "\n");
+		}
+	} 
+	
 	for(i=0; i<6; i++){
 		switch(i){
-			case 0: start = clock();
+			case 0: fprintf(output,"\n\nSorted array using Insertion Sort Algorithm\n\n");
+					start = clock();
 					insertionSort(sortedArr, N);
 					end = clock();
+					for(j=1; j<N+1; j++){
+						fprintf(output, "%d ", sortedArr[j-1][0]);
+						if(j%50==0){
+							fprintf(output, "\n");
+						}
+					}
 					break;
-			case 1: start = clock();
+					
+			case 1: fprintf(output,"\n\nSorted array using Bubble Sort Algorithm\n\n");
+					start = clock();
 					bubbleSort(sortedArr, N);
 					end = clock();
+					for(j=1; j<N+1; j++){
+						fprintf(output, "%d ", sortedArr[j-1][1]);
+						if(j%50==0){
+							fprintf(output, "\n");
+						}
+					}
 					break;
 			
-			case 2: start = clock();
+			case 2: fprintf(output,"\n\nSorted array using Selection Sort Algorithm\n\n");
+					start = clock();
 					selectionSort(sortedArr, N);
 					end = clock();
+					for(j=1; j<N+1; j++){
+						fprintf(output, "%d ", sortedArr[j-1][2]);
+						if(j%50==0){
+							fprintf(output, "\n");
+						}
+					}
 					break;
 		}
 		cpu_time_used = ((double) (end - start))/ CLOCKS_PER_SEC; 
@@ -63,6 +93,7 @@ int main(){
 
 		
 	}
+	
 
 	return 0;
 	
@@ -119,7 +150,7 @@ void selectionSort(unsigned long int (*sortedArr)[6], int N){
         for (length = i+1; length<N; length++)
         {
         	
-            if (sortedArr[position][2] < sortedArr[length][2])
+            if (sortedArr[position][2] > sortedArr[length][2])
             {
                 position = length;
             }
