@@ -28,4 +28,4 @@ Format as follows:
 
 void insertionSort(unsigned long int (*sortedArr)[0], int N);
 
-The program outputs a .txt file containing the unsorted values and the 6 sorted arrays
+The program outputs a .txt file containing the unsorted values and the 6 sorted arrays.
