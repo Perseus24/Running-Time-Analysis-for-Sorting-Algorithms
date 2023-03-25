@@ -20,10 +20,10 @@ Indexing as follows:
 <br/>sortedArr[][1] = Bubble Sort
 <br/>sortedArr[][2] = Selection Sort
 <br/>sortedArr[][3] = Mergesort
-<br/>sortedArr[][4] = Quicksort
-<br/>sortedArr[][5] = Heapsort
+<br/>sortedArr[][4] = Heapsort
+<br/>sortedArr[][5] = Quicksort
 
-The parameters of the algoroithms are the 2D array and the N (num of integers)
+The parameters of the algorithms are the 2D array and the N (num of integers)
 Format as follows:
 
 void insertionSort(unsigned long int (*sortedArr)[6], int N);
