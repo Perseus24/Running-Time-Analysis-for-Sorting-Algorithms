@@ -9,6 +9,9 @@
 void insertionSort(unsigned long int (*sortedArr)[6], int N);
 void bubbleSort(unsigned long int (*sortedArr)[6], int N);
 void selectionSort(unsigned long int (*sortedArr)[6], int N);
+int partition(unsigned long int (*sortedArr)[6], int low, int high);
+void swap(unsigned long int* a, unsigned long int* b);
+void quickSort(unsigned long int (*sortedArr)[6], int low, int high);
 
 int main(){
 	
@@ -79,6 +82,17 @@ int main(){
 					end = clock();
 					for(j=1; j<N+1; j++){
 						fprintf(output, "%lu ", sortedArr[j-1][2]);
+						if(j%50==0){
+							fprintf(output, "\n");
+						}
+					}
+					break;
+			case 5: fprintf(output,"\n\nSorted array using QuickSort Algorithm\n\n");
+					start = clock();
+					quickSort(sortedArr, 0, N-1);
+					end = clock();
+					for(j=1; j<N+1; j++){
+						fprintf(output, "%lu ", sortedArr[j-1][5]);
 						if(j%50==0){
 							fprintf(output, "\n");
 						}
@@ -177,24 +191,25 @@ void heapSort(){
 	
 }
 
-void quickSort(unsigned long int (*sortedArr)[6], int low, int high, int index){
+void quickSort(unsigned long int (*sortedArr)[6], int low, int high){
     if (low < high) {
-        int pivotIndex = partition(sortedArr, low, high, index);
-        quickSort(sortedArr, low, pivotIndex - 1, index);
-        quickSort(sortedArr, pivotIndex + 1, high, index);
+        int pivotIndex = partition(sortedArr, low, high);
+        quickSort(sortedArr, low, pivotIndex - 1);
+        quickSort(sortedArr, pivotIndex + 1, high);
     }
 }
 
 int partition(unsigned long int (*sortedArr)[6], int low, int high, int index) {
-    unsigned long int pivot = sortedArr[high][index];
+    unsigned long int pivot = sortedArr[high][5];
     int i = low - 1;
-    for (int j = low; j < high; j++) {
-        if (sortedArr[j][index] < pivot) {
+    int j;
+    for (j = low; j < high; j++) {
+        if (sortedArr[j][5] < pivot) {
             i++;
-            swap(&sortedArr[i][index], &sortedArr[j][index]);
+            swap(&sortedArr[i][5], &sortedArr[j][5]);
         }
     }
-    swap(&sortedArr[i + 1][index], &sortedArr[high][index]);
+    swap(&sortedArr[i + 1][5], &sortedArr[high][5]);
     return i + 1;
 }
 
