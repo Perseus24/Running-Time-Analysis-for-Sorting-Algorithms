@@ -173,6 +173,29 @@ void heapSort(){
 	
 }
 
-void quickSort(){
-	
+void quickSort(unsigned long int (*sortedArr)[6], int low, int high, int index){
+    if (low < high) {
+        int pivotIndex = partition(sortedArr, low, high, index);
+        quickSort(sortedArr, low, pivotIndex - 1, index);
+        quickSort(sortedArr, pivotIndex + 1, high, index);
+    }
+}
+
+int partition(unsigned long int (*sortedArr)[6], int low, int high, int index) {
+    unsigned long int pivot = sortedArr[high][index];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (sortedArr[j][index] < pivot) {
+            i++;
+            swap(&sortedArr[i][index], &sortedArr[j][index]);
+        }
+    }
+    swap(&sortedArr[i + 1][index], &sortedArr[high][index]);
+    return i + 1;
+}
+
+void swap(unsigned long int* a, unsigned long int* b) {
+    unsigned long int temp = *a;
+    *a = *b;
+    *b = temp;
 }
