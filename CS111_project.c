@@ -13,24 +13,21 @@ void selectionSort(unsigned long int (*sortedArr)[6], int N);
 int main(){
 	
 	int N;							//Number of Integers
-	N=10000;
-	int r, i, j;
+	N=1000;
+	int i, j;
 	clock_t start, end;
 	double cpu_time_used;
-	unsigned long int sortedArr[N][6];
+	unsigned long int (*sortedArr)[6] = malloc(N*sizeof(*sortedArr));
 	unsigned long int max = ULONG_MAX;
-	unsigned long int unsortedArr[N];          
+	unsigned long int *unsortedArr = malloc(N*sizeof(unsigned long int));
 	double runningTime[6];
 	FILE* output;
 	
 											//generating an unsorted array
-
-	//As of 3/15/2023, the maximum input is 500,000 without the use of static
-	//unsigned long static int v[1000000] should be used for 1 million integers
-	
-	srand(time(0));
+											
+	srand((unsigned long int)(time(NULL)));
 	for(i=0; i<N; i++){
-		unsortedArr[i] = (rand()% max + 1);
+		unsortedArr[i] = (unsigned long int)((double)rand()/RAND_MAX * max);
 	}
 	
 										//copying unsorted array to the 2D array to be used by the 6 sorting algorithms
@@ -43,11 +40,12 @@ int main(){
 	output = fopen("out.txt", "w");
 	fprintf(output, "Unsorted array using random generated values\n\n");
 	for(i=1; i<N+1; i++){
-		fprintf(output, "%d ", unsortedArr[i-1]);
+		fprintf(output, "%lu ", unsortedArr[i-1]);
 		if(i%50==0){
 			fprintf(output, "\n");
 		}
 	} 
+	
 	
 	for(i=0; i<6; i++){
 		switch(i){
@@ -56,7 +54,7 @@ int main(){
 					insertionSort(sortedArr, N);
 					end = clock();
 					for(j=1; j<N+1; j++){
-						fprintf(output, "%d ", sortedArr[j-1][0]);
+						fprintf(output, "%lu ", sortedArr[j-1][0]);
 						if(j%50==0){
 							fprintf(output, "\n");
 						}
@@ -68,7 +66,7 @@ int main(){
 					bubbleSort(sortedArr, N);
 					end = clock();
 					for(j=1; j<N+1; j++){
-						fprintf(output, "%d ", sortedArr[j-1][1]);
+						fprintf(output, "%lu ", sortedArr[j-1][1]);
 						if(j%50==0){
 							fprintf(output, "\n");
 						}
@@ -80,7 +78,7 @@ int main(){
 					selectionSort(sortedArr, N);
 					end = clock();
 					for(j=1; j<N+1; j++){
-						fprintf(output, "%d ", sortedArr[j-1][2]);
+						fprintf(output, "%lu ", sortedArr[j-1][2]);
 						if(j%50==0){
 							fprintf(output, "\n");
 						}
@@ -89,11 +87,14 @@ int main(){
 		}
 		cpu_time_used = ((double) (end - start))/ CLOCKS_PER_SEC; 
 		runningTime[i] = cpu_time_used;
-		printf("\n\n||The running time is %.10f", cpu_time_used);
+		printf("\n\n||The running time is %.10f", runningTime[i]);
 
 		
 	}
 	
+	free(sortedArr);
+	free(unsortedArr);
+
 
 	return 0;
 	
@@ -106,7 +107,8 @@ void generateSorted(){
 
 void insertionSort(unsigned long int (*sortedArr)[6], int N){
 	
-	int i, key, initial, count=0;
+	int i, key;
+	unsigned long int initial;
     for(i=1; i<N; i++)
     {
         initial = sortedArr[i][0];
@@ -124,7 +126,8 @@ void insertionSort(unsigned long int (*sortedArr)[6], int N){
 
 void bubbleSort(unsigned long int (*sortedArr)[6], int N){
 	
-	int i, n, temp;
+	int i, n;
+	unsigned long int temp;
 	
 	for (i = 0; i<N; i++)
     {
@@ -143,7 +146,8 @@ void bubbleSort(unsigned long int (*sortedArr)[6], int N){
 
 void selectionSort(unsigned long int (*sortedArr)[6], int N){
 	
-	int i, position, swap, length;
+	int i, position, length;
+	unsigned long int swap;
 	for (i = 0; i<N-1; i++)
     {
         position = i;
