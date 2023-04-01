@@ -62,6 +62,7 @@ int main(){
 							fprintf(output, "\n");
 						}
 					}
+					printf("Insertion Sort Algorithm\n");
 					break;
 					
 			case 1: fprintf(output,"\n\nSorted array using Bubble Sort Algorithm\n\n");
@@ -74,6 +75,7 @@ int main(){
 							fprintf(output, "\n");
 						}
 					}
+					printf("Bubble Sort Algorithm\n");
 					break;
 			
 			case 2: fprintf(output,"\n\nSorted array using Selection Sort Algorithm\n\n");
@@ -86,6 +88,7 @@ int main(){
 							fprintf(output, "\n");
 						}
 					}
+					printf("Selection Sort Algorithm\n");
 					break;
 			case 5: fprintf(output,"\n\nSorted array using QuickSort Algorithm\n\n");
 					start = clock();
@@ -97,11 +100,15 @@ int main(){
 							fprintf(output, "\n");
 						}
 					}
+					printf("QuickSort Algorithm\n");
 					break;
+			default: 
+				continue;
+				break;
 		}
 		cpu_time_used = ((double) (end - start))/ CLOCKS_PER_SEC; 
 		runningTime[i] = cpu_time_used;
-		printf("\n\n||The running time is %.10f", runningTime[i]);
+		printf("||The running time is %.10f s\n\n", runningTime[i]);
 
 		
 	}
