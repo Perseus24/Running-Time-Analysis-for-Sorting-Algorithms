@@ -199,7 +199,7 @@ void quickSort(unsigned long int (*sortedArr)[6], int low, int high){
     }
 }
 
-int partition(unsigned long int (*sortedArr)[6], int low, int high, int index) {
+int partition(unsigned long int (*sortedArr)[6], int low, int high) {
     unsigned long int pivot = sortedArr[high][5];
     int i = low - 1;
     int j;
