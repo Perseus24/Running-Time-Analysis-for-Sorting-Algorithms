@@ -11,7 +11,7 @@ void selectionSort(unsigned long int (*sortedArr)[6], int N);
 int partition(unsigned long int (*sortedArr)[6], int low, int high);
 void swap(unsigned long int *a, unsigned long int *b);
 void quickSort(unsigned long int (*sortedArr)[6], int low, int high);
-void Merge(unsigned long int (*A), unsigned long int *L, int leftCount, unsigned long int *R, int rightCount);
+void Merge(unsigned long int (*A), unsigned long int *L, unsigned long int leftCount, unsigned long int *R, unsigned long int rightCount);
 void MergeSort(unsigned long int (*A), int n);
 
 int main()
@@ -107,14 +107,16 @@ int main()
 			}
 			printf("Selection Sort Algorithm\n");
 			break;
-		case 4:
+		case 3:
 			fprintf(output, "\n\nSorted array using MergeSort Algorithm\n\n");
 			start = clock();
-			MergeSort(sortedArr[5], N);
+			// flipped 2D array indexing makes porting difficult,
+			// unsortedArray used instead (since it's been already dumped to out.txt file)
+			MergeSort(unsortedArr, N);
 			end = clock();
 			for (j = 1; j < N + 1; j++)
 			{
-				fprintf(output, "%lu ", sortedArr[j - 1][5]);
+				fprintf(output, "%lu ", unsortedArr[j - 1]);
 				if (j % 50 == 0)
 				{
 					fprintf(output, "\n");
@@ -261,12 +263,12 @@ void swap(unsigned long int *a, unsigned long int *b)
 	*b = temp;
 }
 
-// merge sort implementation from:
+// original merge sort implementation from:
 // https://gist.github.com/mycodeschool/9678029
 
-void Merge(unsigned long int (*A), unsigned long int *L, int leftCount, unsigned long int *R, int rightCount)
+void Merge(unsigned long int (*A), unsigned long int *L, unsigned long int leftCount, unsigned long int *R, unsigned long int rightCount)
 {
-	int i, j, k;
+	unsigned long int i, j, k;
 
 	// i - to mark the index of left aubarray (L)
 	// j - to mark the index of right sub-raay (R)
@@ -290,7 +292,7 @@ void Merge(unsigned long int (*A), unsigned long int *L, int leftCount, unsigned
 
 void MergeSort(unsigned long int (*A), int n)
 {
-	int mid, i;
+	unsigned long int mid, i;
 	unsigned long int *L, *R;
 	if (n < 2)
 		return; // base condition. If the array has less than two element, do nothing.
@@ -300,8 +302,8 @@ void MergeSort(unsigned long int (*A), int n)
 	// create left and right subarrays
 	// mid elements (from index 0 till mid-1) should be part of left sub-array
 	// and (n-mid) elements (from mid to n-1) will be part of right sub-array
-	L = (unsigned long int *)malloc(mid * sizeof(int));
-	R = (unsigned long int *)malloc((n - mid) * sizeof(int));
+	L = (unsigned long int *)malloc(mid * sizeof(unsigned long int));
+	R = (unsigned long int *)malloc((n - mid) * sizeof(unsigned long int));
 
 	for (i = 0; i < mid; i++)
 		L[i] = A[i]; // creating left subarray
