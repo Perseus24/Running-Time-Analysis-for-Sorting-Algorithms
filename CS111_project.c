@@ -16,7 +16,7 @@ void quickSort(unsigned long int (*sortedArr)[6], int low, int high);
 int main(){
 	
 	int N;							//Number of Integers
-	N = 700;
+	N = 50000;
 	int i, j;
 	clock_t start, end;
 	double cpu_time_used;
