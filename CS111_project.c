@@ -1,318 +1,422 @@
-#include <stdio.h>
+#include<stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <limits.h>
+#include<time.h>
+#include<limits.h>
 
-#define CLOCKS_PER_MS (CLOCKS_PER_SEC / 1000)
 
-void insertionSort(unsigned long int (*sortedArr)[6], int N);
-void bubbleSort(unsigned long int (*sortedArr)[6], int N);
-void selectionSort(unsigned long int (*sortedArr)[6], int N);
-int partition(unsigned long int (*sortedArr)[6], int low, int high);
-void swap(unsigned long int *a, unsigned long int *b);
-void quickSort(unsigned long int (*sortedArr)[6], int low, int high);
-void Merge(unsigned long int (*A), unsigned long int *L, unsigned long int leftCount, unsigned long int *R, unsigned long int rightCount);
-void MergeSort(unsigned long int (*A), int n);
+#define CLOCKS_PER_MS (CLOCKS_PER_SEC/1000)
 
-int main()
-{
+void insertionSort(unsigned long int (*sortedArr)[12], int N, int index);
+void bubbleSort(unsigned long int (*sortedArr)[12], int N, int index);
+void selectionSort(unsigned long int (*sortedArr)[12], int N, int index);
+int partition(unsigned long int (*sortedArr)[12], int low, int high, int index);
+void swap(unsigned long int* a, unsigned long int* b);
+void quickSort(unsigned long int (*sortedArr)[12], int low, int high, int index);
+void Merge(unsigned long int (*sortedArr)[12], int l, int m, int r, int index);
+void MergeSort(unsigned long int (*sortedArr)[12], int l, int r, int index);
 
-	int N; // Number of Integers
-	N = 50000;
-	int i, j;
-	clock_t start, end;
+int main(){
+	
+	int N;							//Number of Integers
+	N=1000;
+	int i, j, k;
+	clock_t start, end, start1, end1;
 	double cpu_time_used;
-	unsigned long int(*sortedArr)[6] = malloc(N * sizeof(*sortedArr));
+	unsigned long int (*sortedArr)[12] = malloc(N*sizeof(*sortedArr));
 	unsigned long int max = ULONG_MAX;
-	unsigned long int *unsortedArr = malloc(N * sizeof(unsigned long int));
-	double runningTime[6];
-	FILE *output;
-
-	// generating an unsorted array
-
+	unsigned long int *unsortedArr = malloc(N*sizeof(unsigned long int));
+	unsigned long int *randomSortedArr = malloc(N*sizeof(unsigned long int));
+	double runningTime[12];
+	FILE* output;
+	
+											//generating an unsorted array
+											
 	srand((unsigned long int)(time(NULL)));
-	for (i = 0; i < N; i++)
-	{
-		unsortedArr[i] = (unsigned long int)((double)rand() / RAND_MAX * max);
+	for(i=0; i<N; i++){
+		unsortedArr[i] = (unsigned long int)((double)rand()/RAND_MAX * max);
 	}
-
-	// copying unsorted array to the 2D array to be used by the 6 sorting algorithms
-	for (i = 0; i < N; i++)
-	{
-		for (j = 0; j < 6; j++)
-		{
-			sortedArr[i][j] = unsortedArr[i];
+	
+										//generating a sorted array in increasing order
+	output = fopen("out.txt", "w");									
+	unsigned long int X = 5;
+	fprintf(output, "\n\nSorted array using random generated values\n\n");
+	for(i=0; i<N; i++){
+		if(i==0){
+			randomSortedArr[i] = (unsigned long int)(N + X);
 		}
-	}
-
-	output = fopen("out.txt", "w");
-	fprintf(output, "Unsorted array using random generated values\n\n");
-	for (i = 1; i < N + 1; i++)
-	{
-		fprintf(output, "%lu ", unsortedArr[i - 1]);
-		if (i % 50 == 0)
-		{
+		else{
+			randomSortedArr[i] = (unsigned long int)(randomSortedArr[i-1] + X);
+		}
+		
+		fprintf(output, "%lu ", randomSortedArr[i]);
+		if(i+1%50==0){
 			fprintf(output, "\n");
 		}
 	}
-
-	for (i = 0; i < 6; i++)
-	{
-		switch (i)
-		{
-		case 0:
-			fprintf(output, "\n\nSorted array using Insertion Sort Algorithm\n\n");
-			start = clock();
-			insertionSort(sortedArr, N);
-			end = clock();
-			for (j = 1; j < N + 1; j++)
-			{
-				fprintf(output, "%lu ", sortedArr[j - 1][0]);
-				if (j % 50 == 0)
-				{
-					fprintf(output, "\n");
-				}
-			}
-			printf("Insertion Sort Algorithm\n");
-			break;
-
-		case 1:
-			fprintf(output, "\n\nSorted array using Bubble Sort Algorithm\n\n");
-			start = clock();
-			bubbleSort(sortedArr, N);
-			end = clock();
-			for (j = 1; j < N + 1; j++)
-			{
-				fprintf(output, "%lu ", sortedArr[j - 1][1]);
-				if (j % 50 == 0)
-				{
-					fprintf(output, "\n");
-				}
-			}
-			printf("Bubble Sort Algorithm\n");
-			break;
-
-		case 2:
-			fprintf(output, "\n\nSorted array using Selection Sort Algorithm\n\n");
-			start = clock();
-			selectionSort(sortedArr, N);
-			end = clock();
-			for (j = 1; j < N + 1; j++)
-			{
-				fprintf(output, "%lu ", sortedArr[j - 1][2]);
-				if (j % 50 == 0)
-				{
-					fprintf(output, "\n");
-				}
-			}
-			printf("Selection Sort Algorithm\n");
-			break;
-		case 3:
-			fprintf(output, "\n\nSorted array using MergeSort Algorithm\n\n");
-			start = clock();
-			// flipped 2D array indexing makes porting difficult,
-			// unsortedArray used instead (since it's been already dumped to out.txt file)
-			MergeSort(unsortedArr, N);
-			end = clock();
-			for (j = 1; j < N + 1; j++)
-			{
-				fprintf(output, "%lu ", unsortedArr[j - 1]);
-				if (j % 50 == 0)
-				{
-					fprintf(output, "\n");
-				}
-			}
-			printf("MergeSort Algorithm\n");
-			break;
-		case 5:
-			fprintf(output, "\n\nSorted array using QuickSort Algorithm\n\n");
-			start = clock();
-			quickSort(sortedArr, 0, N - 1);
-			end = clock();
-			for (j = 1; j < N + 1; j++)
-			{
-				fprintf(output, "%lu ", sortedArr[j - 1][5]);
-				if (j % 50 == 0)
-				{
-					fprintf(output, "\n");
-				}
-			}
-			printf("QuickSort Algorithm\n");
-			break;
-		default:
-			continue;
-			break;
+	
+										//copying unsorted array to the 2D array to be used by the 6 sorting algorithms
+	for(i=0; i<N; i++){
+		for(j=0; j<12; j+=2){
+			sortedArr[i][j] = unsortedArr[i];
+			sortedArr[i][j+1] = randomSortedArr[i];	
+			
 		}
-		cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-		runningTime[i] = cpu_time_used;
-		printf("||The running time is %.10f s\n\n", runningTime[i]);
 	}
+	
+	
+	
+										//printing of the unsorted array to the .txt file
+	fprintf(output, "Unsorted array using random generated values\n\n");
+	for(i=1; i<N+1; i++){
+		fprintf(output, "%lu ", unsortedArr[i-1]);
+		if(i%50==0){
+			fprintf(output, "\n");
+		}
+	} 
+	
+	
+	for(i=0; i<6; i++){
+		switch(i){
+			case 0: fprintf(output,"\n\nSorted array using Insertion Sort Algorithm\n\n");
+					start = clock();
+					insertionSort(sortedArr, N, 0);
+					end = clock();
+					
+					start1 = clock();
+					insertionSort(sortedArr, N, 1);
+					end1 = clock();
+					
+					for (k=0; k<2; k++){
+						if(k == 0){
+							fprintf(output,"\n\n[Random Generated Values]\n\n");
+						}
+						else{
+							fprintf(output,"\n\n[Already Sorted Values]\n\n");
+						}
+						for(j=1; j<N+1; j++){
+							fprintf(output, "%lu ", sortedArr[j-1][k]);
+							if(j%50==0){
+								fprintf(output, "\n");
+							}
+						}
+					}
+					break;
+					
+			case 1: fprintf(output,"\n\nSorted array using Bubble Sort Algorithm\n\n");
+					start = clock();
+					bubbleSort(sortedArr, N, 2);
+					end = clock();
+					
+					start1 = clock();
+					bubbleSort(sortedArr, N, 3);
+					end1 = clock();
+					for (k=2; k<4; k++){
+						if(k == 2){
+							fprintf(output,"\n\n[Random Generated Values]\n\n");
+						}
+						else{
+							fprintf(output,"\n\n[Already Sorted Values]\n\n");
+						}
+						for(j=1; j<N+1; j++){
+							fprintf(output, "%lu ", sortedArr[j-1][k]);
+							if(j%50==0){
+								fprintf(output, "\n");
+							}
+						}
+					}
+					break;
+			
+			case 2: fprintf(output,"\n\nSorted array using Selection Sort Algorithm\n\n");
+					start = clock();
+					selectionSort(sortedArr, N, 4);
+					end = clock();
+					
+					start1 = clock();
+					selectionSort(sortedArr, N, 5);
+					end1 = clock();
+					
+					for (k=4; k<6; k++){
+						if(k == 4){
+							fprintf(output,"\n\n[Random Generated Values]\n\n");
+						}
+						else{
+							fprintf(output,"\n\n[Already Sorted Values]\n\n");
+						}
+						for(j=1; j<N+1; j++){
+							fprintf(output, "%lu ", sortedArr[j-1][k]);
+							if(j%50==0){
+								fprintf(output, "\n");
+							}
+						}
+					}
+					break;
+					
+			case 3: fprintf(output,"\n\nSorted array using Merge Sort Algorithm\n\n");
+					start = clock();
+					MergeSort(sortedArr, 0, N, 6);
+					end = clock();
+					
+					start1 = clock();
+					MergeSort(sortedArr, 0, N, 7);
+					end1 = clock();
+					
+					for (k=6; k<8; k++){
+						if(k == 6){
+							fprintf(output,"\n\n[Random Generated Values]\n\n");
+						}
+						else{
+							fprintf(output,"\n\n[Already Sorted Values]\n\n");
+						}
+						for(j=1; j<N+1; j++){
+							fprintf(output, "%lu ", sortedArr[j-1][k]);
+							if(j%50==0){
+								fprintf(output, "\n");
+							}
+						}
+					}
+					break;
+			case 5: fprintf(output,"\n\nSorted array using QuickSort Algorithm\n\n");
+					start = clock();
+					quickSort(sortedArr, 0, N-1, 10);
+					end = clock();
+					
+					start1 = clock();
+					quickSort(sortedArr, 0, N-1, 11);
+					end1 = clock();
+					
+					
+					for (k=10; k<12; k++){
+						if(k == 10){
+							fprintf(output,"\n\n[Random Generated Values]\n\n");
+						}
+						else{
+							fprintf(output,"\n\n[Already Sorted Values]\n\n");
+						}
+						for(j=1; j<N+1; j++){
+							fprintf(output, "%lu ", sortedArr[j-1][k]);
+							if(j%50==0){
+								fprintf(output, "\n");
+							}
+						}
+					}
+					break;
+					
+		}
+		cpu_time_used = ((double) (end - start))/ CLOCKS_PER_SEC; 
+		runningTime[2*i] = cpu_time_used;
+		cpu_time_used = ((double) (end1 - start1))/ CLOCKS_PER_SEC; 
+		runningTime[2*i+1] = cpu_time_used;
+		printf("\n\n||The running time is %.10f", runningTime[2*i]);
+		printf("\n\n||The running time (sorted) is %.10f", runningTime[2*i+1]);
 
-	free(sortedArr);
+		
+	}
+	
 	free(unsortedArr);
+	free(randomSortedArr);
+	
+	free(sortedArr);
 
 	return 0;
+	
 }
 
-void generateSorted()
-{
+
+void generateSorted(){
+	
 }
 
-void insertionSort(unsigned long int (*sortedArr)[6], int N)
-{
-
+void insertionSort(unsigned long int (*sortedArr)[12], int N, int index){
+	
 	int i, key;
 	unsigned long int initial;
-	for (i = 1; i < N; i++)
-	{
-		initial = sortedArr[i][0];
-		key = i - 1;
-		while (key >= 0 && sortedArr[key][0] > initial)
-		{
-			sortedArr[key + 1][0] = sortedArr[key][0];
-			key = key - 1;
-		}
-		sortedArr[key + 1][0] = initial;
-	}
+    for(i=1; i<N; i++)
+    {
+        initial = sortedArr[i][index];
+        key = i-1;
+        while (key >=0 && sortedArr[key][index] >  initial)
+        {
+            sortedArr[key+1][index] = sortedArr[key][index];
+            key = key - 1;
+        }
+        sortedArr[key+1][index] = initial;
+    }
+    
+	
 }
 
-void bubbleSort(unsigned long int (*sortedArr)[6], int N)
-{
-
+void bubbleSort(unsigned long int (*sortedArr)[12], int N, int index){
+	
 	int i, n;
 	unsigned long int temp;
-
-	for (i = 0; i < N; i++)
-	{
-		for (n = 0; n < N - 1; n++)
-		{
-			if (sortedArr[n][1] > sortedArr[n + 1][1])
-			{
-				temp = sortedArr[n][1];
-				sortedArr[n][1] = sortedArr[n + 1][1];
-				sortedArr[n + 1][1] = temp;
-			}
-		}
-	}
+	
+	for (i = 0; i<N; i++)
+    {
+        for (n = 0; n < N - 1; n++)
+        {
+            if  (sortedArr[n][index] >  sortedArr[n+1][index])
+            {
+                temp = sortedArr[n][index];
+                sortedArr[n][index] = sortedArr[n+1][index];
+                sortedArr[n+1][index] = temp;
+            }
+        }
+    }
+	
 }
 
-void selectionSort(unsigned long int (*sortedArr)[6], int N)
-{
-
+void selectionSort(unsigned long int (*sortedArr)[12], int N, int index){
+	
 	int i, position, length;
 	unsigned long int swap;
-	for (i = 0; i < N - 1; i++)
-	{
-		position = i;
-		for (length = i + 1; length < N; length++)
-		{
+	for (i = 0; i<N-1; i++)
+    {
+        position = i;
+        for (length = i+1; length<N; length++)
+        {
+        	
+            if (sortedArr[position][index] > sortedArr[length][index])
+            {
+                position = length;
+            }
+        }
+        if (position != i)
+        {
+            swap = sortedArr[i][index];
+            sortedArr[i][index] = sortedArr[position][index];
+            sortedArr[position][index] = swap;
+        }   
+    }
+	
+}
 
-			if (sortedArr[position][2] > sortedArr[length][2])
-			{
-				position = length;
-			}
-		}
-		if (position != i)
-		{
-			swap = sortedArr[i][2];
-			sortedArr[i][2] = sortedArr[position][2];
-			sortedArr[position][2] = swap;
-		}
+
+void quickSort(unsigned long int (*sortedArr)[12], int low, int high, int index){
+
+    if (low < high) {
+
+        int pivotIndex = partition(sortedArr, low, high, index);
+        quickSort(sortedArr, low, pivotIndex - 1, index);
+        quickSort(sortedArr, pivotIndex + 1, high, index);
+
+    }
+
+}
+
+
+int partition(unsigned long int (*sortedArr)[12], int low, int high, int index) {
+
+    //unsigned long int pivot = sortedArr[high][index];
+    unsigned long int left = sortedArr[low][index];
+    unsigned long int right = sortedArr[high][index];
+    unsigned long int mid = sortedArr[(high+1)/2][index];
+    unsigned long int pivot;
+    
+    if((left>=right && left<=mid)||(left>=mid && left<=right)){
+    	pivot = left;
 	}
-}
-
-void mergeSort()
-{
-}
-
-void heapSort()
-{
-}
-
-void quickSort(unsigned long int (*sortedArr)[6], int low, int high)
-{
-	if (low < high)
-	{
-		int pivotIndex = partition(sortedArr, low, high);
-		quickSort(sortedArr, low, pivotIndex - 1);
-		quickSort(sortedArr, pivotIndex + 1, high);
+	else if((right>=left && right<=mid)||(right>=mid && right<=left)){
+    	pivot = right;
 	}
-}
+	else if((mid>=right && mid<=left)||(mid>=left && mid<=right)){
+    	pivot = mid;
+	}
 
-int partition(unsigned long int (*sortedArr)[6], int low, int high)
-{
-	unsigned long int pivot = sortedArr[high][5];
-	int i = low - 1;
+    int i = low - 1;
 	int j;
-	for (j = low; j < high; j++)
-	{
-		if (sortedArr[j][5] < pivot)
-		{
-			i++;
-			swap(&sortedArr[i][5], &sortedArr[j][5]);
-		}
+    for (j = low; j < high; j++) {
+
+        if (sortedArr[j][index] < pivot) {
+
+            i++;
+
+            swap(&sortedArr[i][index], &sortedArr[j][index]);
+
+        }
+
+    }
+
+    swap(&sortedArr[i + 1][index], &sortedArr[high][index]);
+
+    return i + 1;
+
+}
+
+
+
+
+void swap(unsigned long int* a, unsigned long int* b) {
+
+    unsigned long int temp = *a;
+
+    *a = *b;
+
+    *b = temp;
+
+}
+
+void MergeSort(unsigned long int (*sortedArr)[12], int l, int r, int index){
+	
+	if(l < r){
+		int mid = l + (r - l) / 2; // find the mid index.
+	
+		MergeSort(sortedArr,l, mid, index);			  // sorting the left subarray
+		MergeSort(sortedArr, mid + 1, r, index);		  // sorting the right subarray
+		Merge(sortedArr, l, mid, r, index); // Merging L and R into A as sorted list.
+
 	}
-	swap(&sortedArr[i + 1][5], &sortedArr[high][5]);
-	return i + 1;
 }
 
-void swap(unsigned long int *a, unsigned long int *b)
-{
-	unsigned long int temp = *a;
-	*a = *b;
-	*b = temp;
-}
-
-// original merge sort implementation from:
-// https://gist.github.com/mycodeschool/9678029
-
-void Merge(unsigned long int (*A), unsigned long int *L, unsigned long int leftCount, unsigned long int *R, unsigned long int rightCount)
-{
-	unsigned long int i, j, k;
+void Merge(unsigned long int (*sortedArr)[12], int l, int mid, int r, int index){
+	int i, j, k;
+	
+	int n1 = mid - l + 1;
+    int n2 = r - mid;
+    
+    unsigned long int L[n1], R[n2];
+    
+    for (i = 0; i < n1; i++)
+        L[i] = sortedArr[l + i][index];
+    for (j = 0; j < n2; j++)
+        R[j] = sortedArr[mid + 1 + j][index];
 
 	// i - to mark the index of left aubarray (L)
 	// j - to mark the index of right sub-raay (R)
-	// k - to mark the index of merged subarray (A)
+	// k - to mark the index of merged subarray (sortedArr)
 	i = 0;
 	j = 0;
-	k = 0;
+	k = l;
 
-	while (i < leftCount && j < rightCount)
-	{
-		if (L[i] < R[j])
-			A[k++] = L[i++];
-		else
-			A[k++] = R[j++];
+	while (i < n1 && j < n2){
+		if (L[i] <= R[j]){
+			sortedArr[k][index] = L[i];
+			i++;
+		}
+		else{
+			sortedArr[k][index] = R[j];
+			j++;
+		}
+		k++;
 	}
-	while (i < leftCount)
-		A[k++] = L[i++];
-	while (j < rightCount)
-		A[k++] = R[j++];
+	
+	while (i < n1){
+		sortedArr[k][index] = L[i];
+		k++;
+		i++;
+	}
+		
+	while (j < n2){
+		sortedArr[k][index] = R[j];
+		k++;
+		j++;
+	}
 }
 
-void MergeSort(unsigned long int (*A), int n)
-{
-	unsigned long int mid, i;
-	unsigned long int *L, *R;
-	if (n < 2)
-		return; // base condition. If the array has less than two element, do nothing.
 
-	mid = n / 2; // find the mid index.
 
-	// create left and right subarrays
-	// mid elements (from index 0 till mid-1) should be part of left sub-array
-	// and (n-mid) elements (from mid to n-1) will be part of right sub-array
-	L = (unsigned long int *)malloc(mid * sizeof(unsigned long int));
-	R = (unsigned long int *)malloc((n - mid) * sizeof(unsigned long int));
 
-	for (i = 0; i < mid; i++)
-		L[i] = A[i]; // creating left subarray
-	for (i = mid; i < n; i++)
-		R[i - mid] = A[i]; // creating right subarray
 
-	MergeSort(L, mid);			  // sorting the left subarray
-	MergeSort(R, n - mid);		  // sorting the right subarray
-	Merge(A, L, mid, R, n - mid); // Merging L and R into A as sorted list.
-	free(L);
-	free(R);
-}
+
+
+
+
