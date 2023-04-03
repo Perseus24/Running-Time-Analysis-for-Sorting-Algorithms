@@ -15,7 +15,12 @@ void quickSort(unsigned long int (*sortedArr)[12], int low, int high, int index)
 void Merge(unsigned long int (*sortedArr)[12], int l, int m, int r, int index);
 void MergeSort(unsigned long int (*sortedArr)[12], int l, int r, int index);
 
+void generateValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, int x);
+void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output);
+
+
 int main(){
+	
 	
 	int N;							//Number of Integers
 	N=1000;
@@ -23,36 +28,33 @@ int main(){
 	clock_t start, end, start1, end1;
 	double cpu_time_used;
 	unsigned long int (*sortedArr)[12] = malloc(N*sizeof(*sortedArr));
-	unsigned long int max = ULONG_MAX;
 	unsigned long int *unsortedArr = malloc(N*sizeof(unsigned long int));
 	unsigned long int *randomSortedArr = malloc(N*sizeof(unsigned long int));
 	double runningTime[12];
 	FILE* output;
+	int x = 5;
 	
-											//generating an unsorted array
+											//generating an unsorted array and a sorted array in increasing order
 											
-	srand((unsigned long int)(time(NULL)));
-	for(i=0; i<N; i++){
-		unsortedArr[i] = (unsigned long int)((double)rand()/RAND_MAX * max);
-	}
+	generateValues(unsortedArr, randomSortedArr, N, x);
 	
-										//generating a sorted array in increasing order
+										
 	output = fopen("out.txt", "w");									
-	unsigned long int X = 5;
-	fprintf(output, "\n\nSorted array using random generated values\n\n");
-	for(i=0; i<N; i++){
-		if(i==0){
-			randomSortedArr[i] = (unsigned long int)(N + X);
-		}
-		else{
-			randomSortedArr[i] = (unsigned long int)(randomSortedArr[i-1] + X);
-		}
-		
-		fprintf(output, "%lu ", randomSortedArr[i]);
-		if(i+1%50==0){
+	
+	fprintf(output, "\n\nRandom generated values\n\n");
+	for(i=1; i<N+1; i++){
+		fprintf(output, "%lu ", unsortedArr[i-1]);
+		if(i%50==0){
 			fprintf(output, "\n");
 		}
-	}
+	} 
+	fprintf(output, "\n\nSorted array\n\n");
+	for(i=1; i<N+1; i++){
+		fprintf(output, "%lu ", randomSortedArr[i-1]);
+		if(i%50==0){
+			fprintf(output, "\n");
+		}
+	} 
 	
 										//copying unsorted array to the 2D array to be used by the 6 sorting algorithms
 	for(i=0; i<N; i++){
@@ -63,16 +65,9 @@ int main(){
 		}
 	}
 	
-	
-	
-										//printing of the unsorted array to the .txt file
-	fprintf(output, "Unsorted array using random generated values\n\n");
-	for(i=1; i<N+1; i++){
-		fprintf(output, "%lu ", unsortedArr[i-1]);
-		if(i%50==0){
-			fprintf(output, "\n");
-		}
-	} 
+	printf("--------------------------------------------------------------------------------------------\n");
+	printf("|   ALGORITHM    |      RUNNNING TIME  (random)   |      RUNNNING TIME  (already sorted)   |\n");
+	printf("--------------------------------------------------------------------------------------------\n");
 	
 	
 	for(i=0; i<6; i++){
@@ -86,20 +81,8 @@ int main(){
 					insertionSort(sortedArr, N, 1);
 					end1 = clock();
 					
-					for (k=0; k<2; k++){
-						if(k == 0){
-							fprintf(output,"\n\n[Random Generated Values]\n\n");
-						}
-						else{
-							fprintf(output,"\n\n[Already Sorted Values]\n\n");
-						}
-						for(j=1; j<N+1; j++){
-							fprintf(output, "%lu ", sortedArr[j-1][k]);
-							if(j%50==0){
-								fprintf(output, "\n");
-							}
-						}
-					}
+					copyToFile(sortedArr, 0, N, output);
+					printf("| Insertion Sort |   ");
 					break;
 					
 			case 1: fprintf(output,"\n\nSorted array using Bubble Sort Algorithm\n\n");
@@ -110,20 +93,9 @@ int main(){
 					start1 = clock();
 					bubbleSort(sortedArr, N, 3);
 					end1 = clock();
-					for (k=2; k<4; k++){
-						if(k == 2){
-							fprintf(output,"\n\n[Random Generated Values]\n\n");
-						}
-						else{
-							fprintf(output,"\n\n[Already Sorted Values]\n\n");
-						}
-						for(j=1; j<N+1; j++){
-							fprintf(output, "%lu ", sortedArr[j-1][k]);
-							if(j%50==0){
-								fprintf(output, "\n");
-							}
-						}
-					}
+					
+					copyToFile(sortedArr, 2, N, output);
+					printf("| Bubble Sort    |   ");
 					break;
 			
 			case 2: fprintf(output,"\n\nSorted array using Selection Sort Algorithm\n\n");
@@ -135,20 +107,8 @@ int main(){
 					selectionSort(sortedArr, N, 5);
 					end1 = clock();
 					
-					for (k=4; k<6; k++){
-						if(k == 4){
-							fprintf(output,"\n\n[Random Generated Values]\n\n");
-						}
-						else{
-							fprintf(output,"\n\n[Already Sorted Values]\n\n");
-						}
-						for(j=1; j<N+1; j++){
-							fprintf(output, "%lu ", sortedArr[j-1][k]);
-							if(j%50==0){
-								fprintf(output, "\n");
-							}
-						}
-					}
+					copyToFile(sortedArr, 4, N, output);
+					printf("| Selection Sort |   ");
 					break;
 					
 			case 3: fprintf(output,"\n\nSorted array using Merge Sort Algorithm\n\n");
@@ -160,21 +120,23 @@ int main(){
 					MergeSort(sortedArr, 0, N, 7);
 					end1 = clock();
 					
-					for (k=6; k<8; k++){
-						if(k == 6){
-							fprintf(output,"\n\n[Random Generated Values]\n\n");
-						}
-						else{
-							fprintf(output,"\n\n[Already Sorted Values]\n\n");
-						}
-						for(j=1; j<N+1; j++){
-							fprintf(output, "%lu ", sortedArr[j-1][k]);
-							if(j%50==0){
-								fprintf(output, "\n");
-							}
-						}
-					}
+					copyToFile(sortedArr, 6, N, output);
+					printf("| Merge Sort     |   ");
 					break;
+					
+			case 4: fprintf(output,"\n\nSorted array using Heap Sort Algorithm\n\n");
+					start = clock();
+					//MergeSort(sortedArr, 0, N, 8);
+					end = clock();
+					
+					start1 = clock();
+					//MergeSort(sortedArr, 0, N, 9);
+					end1 = clock();
+					
+					copyToFile(sortedArr, 8, N, output);
+					printf("| Heap Sort      |   ");
+					break;
+					
 			case 5: fprintf(output,"\n\nSorted array using QuickSort Algorithm\n\n");
 					start = clock();
 					quickSort(sortedArr, 0, N-1, 10);
@@ -184,21 +146,8 @@ int main(){
 					quickSort(sortedArr, 0, N-1, 11);
 					end1 = clock();
 					
-					
-					for (k=10; k<12; k++){
-						if(k == 10){
-							fprintf(output,"\n\n[Random Generated Values]\n\n");
-						}
-						else{
-							fprintf(output,"\n\n[Already Sorted Values]\n\n");
-						}
-						for(j=1; j<N+1; j++){
-							fprintf(output, "%lu ", sortedArr[j-1][k]);
-							if(j%50==0){
-								fprintf(output, "\n");
-							}
-						}
-					}
+					copyToFile(sortedArr, 10, N, output);
+					printf("| Quicksort      |   ");
 					break;
 					
 		}
@@ -206,11 +155,14 @@ int main(){
 		runningTime[2*i] = cpu_time_used;
 		cpu_time_used = ((double) (end1 - start1))/ CLOCKS_PER_SEC; 
 		runningTime[2*i+1] = cpu_time_used;
-		printf("\n\n||The running time is %.10f", runningTime[2*i]);
-		printf("\n\n||The running time (sorted) is %.10f", runningTime[2*i+1]);
+		printf("\t   %.10f \t  |", runningTime[2*i]);
+		printf("\t\t   %.10f \t   |\n", runningTime[2*i+1]);
+		//printf("--------------------------------------------------------------------------------------------\n");
+		printf("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * \n");
+
 
 		
-	}
+ }
 	
 	free(unsortedArr);
 	free(randomSortedArr);
@@ -221,10 +173,41 @@ int main(){
 	
 }
 
-
-void generateSorted(){
+void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output){
+	int i, j;
+	
+	for (i=k; i<k+2; i++){
+		if(i == k)
+			fprintf(output,"\n\n[Random Generated Values]\n\n");
+		else
+			fprintf(output,"\n\n[Already Sorted Values]\n\n");
+						
+		for(j=1; j<N+1; j++){
+			fprintf(output, "%lu ", sortedArr[j-1][i]);
+			if(j%50==0)
+				fprintf(output, "\n");
+							
+		}
+	}
 	
 }
+
+
+void generateValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, int x){
+	int i;
+	unsigned long int max = ULONG_MAX;
+	
+	srand((unsigned long int)(time(NULL)));
+	for(i=0; i<N; i++){
+		unsortedArr[i] = (unsigned long int)((double)rand()/RAND_MAX * max);
+	}
+	
+	for(i=0; i<N; i++){
+		randomSortedArr[i] = (unsigned long int)(N + (i+1)*x);
+	}
+
+}
+
 
 void insertionSort(unsigned long int (*sortedArr)[12], int N, int index){
 	
