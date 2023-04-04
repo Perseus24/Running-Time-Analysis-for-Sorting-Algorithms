@@ -22,9 +22,15 @@ void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output);
 int main(){
 	
 	
-	int N;							//Number of Integers
-	N=1000;
+	
+	int N, x;							//Number of Integers
 	int i, j, k;
+	
+	printf("\nPlease input your preffered number of values to be sorted: ");
+	scanf(" %d", &N);
+	printf("\nPlease input an integer x (to be used in generating a sorted array): ");
+	scanf(" %d", &x);
+	
 	clock_t start, end, start1, end1;
 	double cpu_time_used;
 	unsigned long int (*sortedArr)[12] = malloc(N*sizeof(*sortedArr));
@@ -32,7 +38,8 @@ int main(){
 	unsigned long int *randomSortedArr = malloc(N*sizeof(unsigned long int));
 	double runningTime[12];
 	FILE* output;
-	int x = 5;
+
+	
 	
 											//generating an unsorted array and a sorted array in increasing order
 											
@@ -65,66 +72,67 @@ int main(){
 		}
 	}
 	
-	printf("--------------------------------------------------------------------------------------------\n");
+	printf("\n||Number of values to be sorted: %d", N);
+	printf("\n\n--------------------------------------------------------------------------------------------\n");
 	printf("|   ALGORITHM    |      RUNNNING TIME  (random)   |      RUNNNING TIME  (already sorted)   |\n");
 	printf("--------------------------------------------------------------------------------------------\n");
 	
 	
 	for(i=0; i<6; i++){
 		switch(i){
-			case 0: fprintf(output,"\n\nSorted array using Insertion Sort Algorithm\n\n");
+			case 0: fprintf(output,"\n\n\nSorted array using Insertion Sort Algorithm\n");
 					start = clock();
-					insertionSort(sortedArr, N, 0);
+					//insertionSort(sortedArr, N, 0);
 					end = clock();
 					
 					start1 = clock();
-					insertionSort(sortedArr, N, 1);
+					//insertionSort(sortedArr, N, 1);
 					end1 = clock();
 					
 					copyToFile(sortedArr, 0, N, output);
 					printf("| Insertion Sort |   ");
 					break;
 					
-			case 1: fprintf(output,"\n\nSorted array using Bubble Sort Algorithm\n\n");
+			case 1: fprintf(output,"\n\n\nSorted array using Bubble Sort Algorithm\n");
 					start = clock();
-					bubbleSort(sortedArr, N, 2);
+					//bubbleSort(sortedArr, N, 2);
 					end = clock();
 					
 					start1 = clock();
-					bubbleSort(sortedArr, N, 3);
+					//bubbleSort(sortedArr, N, 3);
 					end1 = clock();
 					
 					copyToFile(sortedArr, 2, N, output);
 					printf("| Bubble Sort    |   ");
 					break;
 			
-			case 2: fprintf(output,"\n\nSorted array using Selection Sort Algorithm\n\n");
+			case 2: fprintf(output,"\n\n\nSorted array using Selection Sort Algorithm\n");
 					start = clock();
-					selectionSort(sortedArr, N, 4);
+					//selectionSort(sortedArr, N, 4);
 					end = clock();
 					
 					start1 = clock();
-					selectionSort(sortedArr, N, 5);
+					//selectionSort(sortedArr, N, 5);
 					end1 = clock();
 					
 					copyToFile(sortedArr, 4, N, output);
 					printf("| Selection Sort |   ");
 					break;
 					
-			case 3: fprintf(output,"\n\nSorted array using Merge Sort Algorithm\n\n");
+			case 3: fprintf(output,"\n\n\nSorted array using Merge Sort Algorithm\n");
 					start = clock();
-					MergeSort(sortedArr, 0, N, 6);
+					MergeSort(sortedArr, 0, N-1, 6);
 					end = clock();
 					
 					start1 = clock();
-					MergeSort(sortedArr, 0, N, 7);
+					MergeSort(sortedArr, 0, N-1, 7);
 					end1 = clock();
 					
 					copyToFile(sortedArr, 6, N, output);
 					printf("| Merge Sort     |   ");
 					break;
 					
-			case 4: fprintf(output,"\n\nSorted array using Heap Sort Algorithm\n\n");
+			case 4: fprintf(output,"\n\n\nSorted array using Heap Sort Algorithm\n");
 					start = clock();
 					//MergeSort(sortedArr, 0, N, 8);
 					end = clock();
@@ -137,7 +145,7 @@ int main(){
 					printf("| Heap Sort      |   ");
 					break;
 					
-			case 5: fprintf(output,"\n\nSorted array using QuickSort Algorithm\n\n");
+			case 5: fprintf(output,"\n\n\nSorted array using QuickSort Algorithm\n");
 					start = clock();
 					quickSort(sortedArr, 0, N-1, 10);
 					end = clock();
@@ -290,9 +298,10 @@ void quickSort(unsigned long int (*sortedArr)[12], int low, int high, int index)
 int partition(unsigned long int (*sortedArr)[12], int low, int high, int index) {
 
     //unsigned long int pivot = sortedArr[high][index];
+    
     unsigned long int left = sortedArr[low][index];
     unsigned long int right = sortedArr[high][index];
-    unsigned long int mid = sortedArr[(high+1)/2][index];
+    unsigned long int mid = sortedArr[(high + low)/2][index];
     unsigned long int pivot;
     
     if((left>=right && left<=mid)||(left>=mid && left<=right)){
@@ -304,12 +313,13 @@ int partition(unsigned long int (*sortedArr)[12], int low, int high, int index) 
 	else if((mid>=right && mid<=left)||(mid>=left && mid<=right)){
     	pivot = mid;
 	}
+	
 
     int i = low - 1;
 	int j;
-    for (j = low; j < high; j++) {
+    for (j = low; j <= high; j++) {
 
-        if (sortedArr[j][index] < pivot) {
+        if (sortedArr[j][index] <= pivot) {
 
             i++;
 
@@ -355,13 +365,19 @@ void Merge(unsigned long int (*sortedArr)[12], int l, int mid, int r, int index)
 	
 	int n1 = mid - l + 1;
     int n2 = r - mid;
+
+    unsigned long int (*L)= malloc(n1 * sizeof(unsigned long int));
+    unsigned long int (*R)= malloc(n2 * sizeof(unsigned long int));
+	
     
-    unsigned long int L[n1], R[n2];
-    
-    for (i = 0; i < n1; i++)
-        L[i] = sortedArr[l + i][index];
-    for (j = 0; j < n2; j++)
-        R[j] = sortedArr[mid + 1 + j][index];
+    for (i = 0; i < n1; i++){
+    	L[i] = sortedArr[l + i][index];
+	}
+       
+    for (j = 0; j < n2; j++){
+    	R[j] = sortedArr[mid + 1 + j][index];	
+	}
+        
 
 	// i - to mark the index of left aubarray (L)
 	// j - to mark the index of right sub-raay (R)
