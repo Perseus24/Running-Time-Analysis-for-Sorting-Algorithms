@@ -19,6 +19,23 @@ void heapSort(unsigned long int (*sortedArr)[12], int n, int index);
 void generateValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, int x);
 void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output);
 
+//To use this: "isSorted(sortedArr, N-1, 7);" - for heapSort testing example
+int isSorted(unsigned long int arr[][12], int size, int index){
+    unsigned long int largest = 0;
+    for(int i=0; i<size-1; i++){
+        if(largest <= arr[i][index]){
+            largest = arr[i][index];
+        }
+
+        else{
+            printf("\n[array not sorted]\n");
+            printf("%d and %d", largest, arr[i][index]);
+            return 0;
+        }
+    }
+    puts("\n[array sorted]\n");
+    return 1;
+}
 
 int main(){
 	
