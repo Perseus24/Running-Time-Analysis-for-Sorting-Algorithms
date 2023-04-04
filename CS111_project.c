@@ -14,35 +14,23 @@ void swap(unsigned long int* a, unsigned long int* b);
 void quickSort(unsigned long int (*sortedArr)[12], int low, int high, int index);
 void Merge(unsigned long int (*sortedArr)[12], int l, int m, int r, int index);
 void MergeSort(unsigned long int (*sortedArr)[12], int l, int r, int index);
-void heapify(unsigned long int (*sortedArr)[12], int n, int i, int index);
-void heapSort(unsigned long int (*sortedArr)[12], int n, int index);
+void heapify(unsigned long int (*sortedArr)[12], int N, int i, int index);
+void heapSort(unsigned long int (*sortedArr)[12], int N, int index);
+void median(unsigned long int (*sortedArr)[12], int low, int high, int index);
+
 void generateValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, int x);
 void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output);
+void copyGeneratedValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, FILE *output);
+void printIsSorted(unsigned long int (*sortedArr)[12], int N, int index, int index1);
 
-//To use this: "isSorted(sortedArr, N-1, 7);" - for heapSort testing example
-int isSorted(unsigned long int arr[][12], int size, int index){
-    unsigned long int largest = 0;
-    for(int i=0; i<size-1; i++){
-        if(largest <= arr[i][index]){
-            largest = arr[i][index];
-        }
-
-        else{
-            printf("\n[array not sorted]\n");
-            printf("%d and %d", largest, arr[i][index]);
-            return 0;
-        }
-    }
-    puts("\n[array sorted]\n");
-    return 1;
-}
+int isSorted(unsigned long int (*sortedArr)[12], int N, int index);
 
 int main(){
 	
 	
 	
 	int N, x;							//Number of Integers
-	int i, j, k;
+	int i, j, temp;
 	
 	printf("\nPlease input your preffered number of values to be sorted: ");
 	scanf(" %d", &N);
@@ -59,29 +47,15 @@ int main(){
 
 	
 	
-											//generating an unsorted array and a sorted array in increasing order
+	//generating an unsorted array and a sorted array in increasing order
 											
-	generateValues(unsortedArr, randomSortedArr, N, x);
+	generateValues(unsortedArr, randomSortedArr, N, x);									
+	output = fopen("out.txt", "w");	
+	copyGeneratedValues(unsortedArr, randomSortedArr, N, output);
+									
 	
-										
-	output = fopen("out.txt", "w");									
-	
-	fprintf(output, "\n\nRandom generated values\n\n");
-	for(i=1; i<N+1; i++){
-		fprintf(output, "%lu ", unsortedArr[i-1]);
-		if(i%50==0){
-			fprintf(output, "\n");
-		}
-	} 
-	fprintf(output, "\n\nSorted array\n\n");
-	for(i=1; i<N+1; i++){
-		fprintf(output, "%lu ", randomSortedArr[i-1]);
-		if(i%50==0){
-			fprintf(output, "\n");
-		}
-	} 
-	
-										//copying unsorted array to the 2D array to be used by the 6 sorting algorithms
+
+	//copying generated arrays to the 2D array to be used by the 6 sorting algorithms
 	for(i=0; i<N; i++){
 		for(j=0; j<12; j+=2){
 			sortedArr[i][j] = unsortedArr[i];
@@ -100,11 +74,11 @@ int main(){
 		switch(i){
 			case 0: fprintf(output,"\n\n\nSorted array using Insertion Sort Algorithm\n");
 					start = clock();
-					//insertionSort(sortedArr, N, 0);
+					insertionSort(sortedArr, N, 0);
 					end = clock();
 					
 					start1 = clock();
-					//insertionSort(sortedArr, N, 1);
+					insertionSort(sortedArr, N, 1);
 					end1 = clock();
 					
 					copyToFile(sortedArr, 0, N, output);
@@ -113,11 +87,11 @@ int main(){
 					
 			case 1: fprintf(output,"\n\n\nSorted array using Bubble Sort Algorithm\n");
 					start = clock();
-					//bubbleSort(sortedArr, N, 2);
+					bubbleSort(sortedArr, N, 2);
 					end = clock();
 					
 					start1 = clock();
-					//bubbleSort(sortedArr, N, 3);
+					bubbleSort(sortedArr, N, 3);
 					end1 = clock();
 					
 					copyToFile(sortedArr, 2, N, output);
@@ -126,11 +100,11 @@ int main(){
 			
 			case 2: fprintf(output,"\n\n\nSorted array using Selection Sort Algorithm\n");
 					start = clock();
-					//selectionSort(sortedArr, N, 4);
+					selectionSort(sortedArr, N, 4);
 					end = clock();
 					
 					start1 = clock();
-					//selectionSort(sortedArr, N, 5);
+					selectionSort(sortedArr, N, 5);
 					end1 = clock();
 					
 					copyToFile(sortedArr, 4, N, output);
@@ -152,11 +126,11 @@ int main(){
 					
 			case 4: fprintf(output,"\n\n\nSorted array using Heap Sort Algorithm\n");
 					start = clock();
-					heapSort(sortedArr, N-1, 8);
+					heapSort(sortedArr, N, 8);
 					end = clock();
 					
 					start1 = clock();
-					heapSort(sortedArr, N-1, 9);
+					heapSort(sortedArr, N, 9);
 					end1 = clock();
 					
 					copyToFile(sortedArr, 8, N, output);
@@ -172,6 +146,7 @@ int main(){
 					quickSort(sortedArr, 0, N-1, 11);
 					end1 = clock();
 					
+					
 					copyToFile(sortedArr, 10, N, output);
 					printf("| Quicksort      |   ");
 					break;
@@ -179,20 +154,20 @@ int main(){
 		}
 		cpu_time_used = ((double) (end - start))/ CLOCKS_PER_SEC; 
 		runningTime[2*i] = cpu_time_used;
+		printf("\t   %.10f \t  |", runningTime[2*i]);
+		
 		cpu_time_used = ((double) (end1 - start1))/ CLOCKS_PER_SEC; 
 		runningTime[2*i+1] = cpu_time_used;
-		printf("\t   %.10f \t  |", runningTime[2*i]);
-		printf("\t\t   %.10f \t   |\n", runningTime[2*i+1]);
-		//printf("--------------------------------------------------------------------------------------------\n");
+		printf("\t\t   %.10f \t   |", runningTime[2*i+1]);
+		
+		printIsSorted(sortedArr, N, 2*i, 2*i+1);
 		printf("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * \n");
-
 
 		
  }
 	
 	free(unsortedArr);
 	free(randomSortedArr);
-	
 	free(sortedArr);
 
 	return 0;
@@ -226,14 +201,30 @@ void generateValues(unsigned long int (*unsortedArr), unsigned long int (*random
 	srand((unsigned long int)(time(NULL)));
 	for(i=0; i<N; i++){
 		unsortedArr[i] = (unsigned long int)((double)rand()/RAND_MAX * max);
-	}
-	
-	for(i=0; i<N; i++){
 		randomSortedArr[i] = (unsigned long int)(N + (i+1)*x);
 	}
+	
 
 }
 
+void copyGeneratedValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, FILE *output){
+	
+	int i;
+	fprintf(output, "\n\nRandom generated values\n\n");
+	for(i=1; i<N+1; i++){
+		fprintf(output, "%lu ", unsortedArr[i-1]);
+		if(i%50==0){
+			fprintf(output, "\n");
+		}
+	} 
+	fprintf(output, "\nAlready sorted array\n\n");
+	for(i=1; i<N+1; i++){
+		fprintf(output, "%lu ", randomSortedArr[i-1]);
+		if(i%50==0){
+			fprintf(output, "\n");
+		}
+	} 
+}
 
 void insertionSort(unsigned long int (*sortedArr)[12], int N, int index){
 	
@@ -309,47 +300,47 @@ void quickSort(unsigned long int (*sortedArr)[12], int low, int high, int index)
         quickSort(sortedArr, pivotIndex + 1, high, index);
 
     }
-
 }
+
+void median(unsigned long int (*sortedArr)[12], int low, int high, int index){
+	
+	unsigned long int left = sortedArr[low][index];
+    unsigned long int right = sortedArr[high][index];
+    unsigned long int mid = sortedArr[(high + low)/2][index];
+    
+    if((left>=right && left<=mid)||(left>=mid && left<=right)){
+    	swap(&sortedArr[low][index], &sortedArr[high][index]);
+	}
+	else if((right>=left && right<=mid)||(right>=mid && right<=left)){
+    	//as is
+	}
+	else if((mid>=right && mid<=left)||(mid>=left && mid<=right)){
+    	swap(&sortedArr[(high+low)/2][index], &sortedArr[high][index]);
+	}
+}
+
 
 
 int partition(unsigned long int (*sortedArr)[12], int low, int high, int index) {
 
-    //unsigned long int pivot = sortedArr[high][index];
-    
-    unsigned long int left = sortedArr[low][index];
-    unsigned long int right = sortedArr[high][index];
-    unsigned long int mid = sortedArr[(high + low)/2][index];
-    unsigned long int pivot;
-    
-    if((left>=right && left<=mid)||(left>=mid && left<=right)){
-    	pivot = left;
-	}
-	else if((right>=left && right<=mid)||(right>=mid && right<=left)){
-    	pivot = right;
-	}
-	else if((mid>=right && mid<=left)||(mid>=left && mid<=right)){
-    	pivot = mid;
-	}
+    median(sortedArr, low, high, index);			//finds the median, swapped it to the last index, and use it to be the pivot
 	
-
+	unsigned long int pivot = sortedArr[high][index];
+	
+	
     int i = low - 1;
 	int j;
-    for (j = low; j <= high; j++) {
-
+    for (j = low; j <= high-1; j++) {
         if (sortedArr[j][index] <= pivot) {
-
             i++;
-
             swap(&sortedArr[i][index], &sortedArr[j][index]);
-
         }
 
     }
 
     swap(&sortedArr[i + 1][index], &sortedArr[high][index]);
 
-    return i + 1;
+    return (i+1);
 
 }
 
@@ -429,51 +420,75 @@ void Merge(unsigned long int (*sortedArr)[12], int l, int mid, int r, int index)
 	}
 }
 
-void heapify(unsigned long int (*sortedArr)[12], int n, int i, int index) {
-    int largest = i; // Initialize largest as root
-    int l = 2 * i + 1; // left = 2*i + 1
-    int r = 2 * i + 2; // right = 2*i + 2
-
-    // If left child is larger than root
-    if (l < n && sortedArr[l][index] > sortedArr[largest][index])
-        largest = l;
-
-    // If right child is larger than largest so far
-    if (r < n && sortedArr[r][index] > sortedArr[largest][index])
-        largest = r;
-
-    // If largest is not root
-    if (largest != i) {
-        unsigned long int temp = sortedArr[i][index];
-        sortedArr[i][index] = sortedArr[largest][index];
-        sortedArr[largest][index] = temp;
-
-        // Recursively heapify the affected sub-tree
-        heapify(sortedArr, n, largest, index);
-    }
-}
-
-// main heap sort
-void heapSort(unsigned long int (*sortedArr)[12], int n, int index) {
-    // Build heap (rearrange array)
-    for (int i = n / 2 - 1; i >= 0; i--)
-        heapify(sortedArr, n, i, index);
-
-    // One by one extract an element from heap
-    for (int i = n - 1; i >= 0; i--) {
-        // Move current root to end
-        unsigned long int temp = sortedArr[0][index];
-        sortedArr[0][index] = sortedArr[i][index];
-        sortedArr[i][index] = temp;
-
-        // call max heapify on the reduced heap
+void heapSort(unsigned long int (*sortedArr)[12], int N, int index){
+ 
+    // Build max heap
+    int i;
+    for (i = N/2 - 1; i >= 0; i--)
+        heapify(sortedArr, N, i, index);
+        
+    // Heap sort
+    for (i = N - 1; i >= 0; i--) {
+        swap(&sortedArr[0][index], &sortedArr[i][index]);
+        // Heapify root element to get highest element at
+        // root again
         heapify(sortedArr, i, 0, index);
     }
 }
 
+void heapify(unsigned long int (*sortedArr)[12], int N, int i, int index){
+    // Find largest among root, left child and right child
+ 
+    // Initialize largest as root
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+ 
+    // If left child is larger than root
+    if (left < N && sortedArr[left][index] > sortedArr[largest][index])
+        largest = left;
+ 
+    // If right child is larger than largest
+    
+    if (right < N && sortedArr[right][index] > sortedArr[largest][index])
+        largest = right;
+ 
+    // Swap and continue heapifying if root is not largest
+    // If largest is not root
+    if (largest != i) {
+        swap(&sortedArr[i][index], &sortedArr[largest][index]);
+        // Recursively heapify the affected
+        // sub-tree
+        heapify(sortedArr, N, largest, index);
+    }
+}
 
+int isSorted(unsigned long int (*sortedArr)[12], int N, int index){
+	unsigned long int largest = sortedArr[0][index];
+	int i;
+	for(i=1; i<N; i++){
+		if(largest<=sortedArr[i][index])
+			largest = sortedArr[i][index];
+		else
+			return 0;
+	}
+	
+	return 1;
+}
 
-
-
-
+void printIsSorted(unsigned long int (*sortedArr)[12], int N, int index, int index1){
+	int temp = 0, temp1 = 0;
+	temp = isSorted(sortedArr, N, index);
+	temp1 = isSorted(sortedArr, N, index1);
+	
+	if(temp == 0 && temp1 == 1)
+		printf("  || The first array (random) is not sorted! ||\n");
+	else if(temp == 1 && temp1 == 0)
+		printf("  || The second array (already sorted) is not sorted! ||\n");
+	else if(temp == 0 && temp1 == 0)
+		printf("  Both arrays are not sorted! ||\n");
+	else
+		printf("  Both arrays are sorted! ||\n");
+	
+}
 
