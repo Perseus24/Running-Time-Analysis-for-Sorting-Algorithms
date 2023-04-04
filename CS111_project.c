@@ -14,10 +14,28 @@ void swap(unsigned long int* a, unsigned long int* b);
 void quickSort(unsigned long int (*sortedArr)[12], int low, int high, int index);
 void Merge(unsigned long int (*sortedArr)[12], int l, int m, int r, int index);
 void MergeSort(unsigned long int (*sortedArr)[12], int l, int r, int index);
-
+void heapify(unsigned long int (*sortedArr)[12], int n, int i, int index);
+void heapSort(unsigned long int (*sortedArr)[12], int n, int index);
 void generateValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, int x);
 void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output);
 
+//To use this: "isSorted(sortedArr, N-1, 7);" - for heapSort testing example
+int isSorted(unsigned long int arr[][12], int size, int index){
+    unsigned long int largest = 0;
+    for(int i=0; i<size-1; i++){
+        if(largest <= arr[i][index]){
+            largest = arr[i][index];
+        }
+
+        else{
+            printf("\n[array not sorted]\n");
+            printf("%d and %d", largest, arr[i][index]);
+            return 0;
+        }
+    }
+    puts("\n[array sorted]\n");
+    return 1;
+}
 
 int main(){
 	
@@ -134,11 +152,11 @@ int main(){
 					
 			case 4: fprintf(output,"\n\n\nSorted array using Heap Sort Algorithm\n");
 					start = clock();
-					//MergeSort(sortedArr, 0, N, 8);
+					heapSort(sortedArr, N-1, 8);
 					end = clock();
 					
 					start1 = clock();
-					//MergeSort(sortedArr, 0, N, 9);
+					heapSort(sortedArr, N-1, 9);
 					end1 = clock();
 					
 					copyToFile(sortedArr, 8, N, output);
@@ -411,7 +429,47 @@ void Merge(unsigned long int (*sortedArr)[12], int l, int mid, int r, int index)
 	}
 }
 
+void heapify(unsigned long int (*sortedArr)[12], int n, int i, int index) {
+    int largest = i; // Initialize largest as root
+    int l = 2 * i + 1; // left = 2*i + 1
+    int r = 2 * i + 2; // right = 2*i + 2
 
+    // If left child is larger than root
+    if (l < n && sortedArr[l][index] > sortedArr[largest][index])
+        largest = l;
+
+    // If right child is larger than largest so far
+    if (r < n && sortedArr[r][index] > sortedArr[largest][index])
+        largest = r;
+
+    // If largest is not root
+    if (largest != i) {
+        unsigned long int temp = sortedArr[i][index];
+        sortedArr[i][index] = sortedArr[largest][index];
+        sortedArr[largest][index] = temp;
+
+        // Recursively heapify the affected sub-tree
+        heapify(sortedArr, n, largest, index);
+    }
+}
+
+// main heap sort
+void heapSort(unsigned long int (*sortedArr)[12], int n, int index) {
+    // Build heap (rearrange array)
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(sortedArr, n, i, index);
+
+    // One by one extract an element from heap
+    for (int i = n - 1; i >= 0; i--) {
+        // Move current root to end
+        unsigned long int temp = sortedArr[0][index];
+        sortedArr[0][index] = sortedArr[i][index];
+        sortedArr[i][index] = temp;
+
+        // call max heapify on the reduced heap
+        heapify(sortedArr, i, 0, index);
+    }
+}
 
 
 
