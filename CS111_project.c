@@ -175,6 +175,7 @@ int main(){
 }
 
 void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output){
+	
 	int i, j;
 	
 	for (i=k; i<k+2; i++){
@@ -195,6 +196,7 @@ void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output){
 
 
 void generateValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, int x){
+	// the function generates random values for "unsortArr" and intializes the "randomSortArr" with values that are already sorted in increasing order. the maximum posible valie for each element in "unsortedArr" is set to the maximum value that can  be stored in 'unsigned long int'. The 'srand' function is a rndom number generatir, and the for loop is used to fill arrays with random or sorted values depending on the array.
 	int i;
 	unsigned long int max = ULONG_MAX;
 	
@@ -208,7 +210,7 @@ void generateValues(unsigned long int (*unsortedArr), unsigned long int (*random
 }
 
 void copyGeneratedValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, FILE *output){
-	
+	// in this code it calls on two arrays "unsortedArr" and "randomSortArr", the integer N, and the file pointer output. this function prints the elements from the "unsortArr" and randomSortArr" arrays to output 50 elements per line. 
 	int i;
 	fprintf(output, "\n\nRandom generated values\n\n");
 	for(i=1; i<N+1; i++){
@@ -322,7 +324,7 @@ void median(unsigned long int (*sortedArr)[12], int low, int high, int index){
 
 
 int partition(unsigned long int (*sortedArr)[12], int low, int high, int index) {
-
+    // in this function we will need use a pivot to determine the median. the median will be used to compare whether its in the lower or higher part of the array
     median(sortedArr, low, high, index);			//finds the median, swapped it to the last index, and use it to be the pivot
 	
 	unsigned long int pivot = sortedArr[high][index];
@@ -474,6 +476,7 @@ int isSorted(unsigned long int (*sortedArr)[12], int N, int index){
 	}
 	
 	return 1;
+	// the function of this code takes 2D array's of unsigned long integers, the number if elements un the sub array, and an index of the element. the function returns 1 if the sub array is sorted in a non descending order based on the given element and if not it returns 0.
 }
 
 void printIsSorted(unsigned long int (*sortedArr)[12], int N, int index, int index1){
