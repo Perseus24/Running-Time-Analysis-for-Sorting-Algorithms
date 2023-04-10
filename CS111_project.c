@@ -39,19 +39,15 @@ int main(){
 	
 	clock_t start, end, start1, end1;
 	double cpu_time_used;
-	unsigned long int (*sortedArr)[12] = malloc(N*sizeof(*sortedArr));
+	unsigned long int (*sortedArr)[12] = malloc(N*sizeof(*sortedArr));			//A two-dimensional array to be used by the six sorting algorithms
 	unsigned long int *unsortedArr = malloc(N*sizeof(unsigned long int));
 	unsigned long int *randomSortedArr = malloc(N*sizeof(unsigned long int));
 	double runningTime[12];
 	FILE* output;
-
-	
-	
-	//generating an unsorted array and a sorted array in increasing order
 											
-	generateValues(unsortedArr, randomSortedArr, N, x);									
+	generateValues(unsortedArr, randomSortedArr, N, x);	//generating an unsorted array and a sorted array in increasing order								
 	output = fopen("out.txt", "w");	
-	copyGeneratedValues(unsortedArr, randomSortedArr, N, output);
+	copyGeneratedValues(unsortedArr, randomSortedArr, N, output);	//prints the generated values to the output file
 									
 	
 
@@ -72,20 +68,19 @@ int main(){
 	
 	for(i=0; i<6; i++){
 		switch(i){
-			case 0: fprintf(output,"\n\n\nSorted array using Insertion Sort Algorithm\n");
+			case 0: fprintf(output,"\n\n\n\tSorted array using Insertion Sort Algorithm\n");
 					start = clock();
-					insertionSort(sortedArr, N, 0);
-					end = clock();
+					insertionSort(sortedArr, N, 0);			//The even numbers refer to the column which the randomly generated
+					end = clock();					// values are stored
 					
 					start1 = clock();
-					insertionSort(sortedArr, N, 1);
-					end1 = clock();
-					
-					copyToFile(sortedArr, 0, N, output);
+					insertionSort(sortedArr, N, 1);			//The odd numbers refer to the column which the already sorted
+					end1 = clock();					// values are stored
+							
 					printf("| Insertion Sort |   ");
 					break;
 					
-			case 1: fprintf(output,"\n\n\nSorted array using Bubble Sort Algorithm\n");
+			case 1: fprintf(output,"\n\n\n\tSorted array using Bubble Sort Algorithm\n");
 					start = clock();
 					bubbleSort(sortedArr, N, 2);
 					end = clock();
@@ -94,11 +89,10 @@ int main(){
 					bubbleSort(sortedArr, N, 3);
 					end1 = clock();
 					
-					copyToFile(sortedArr, 2, N, output);
 					printf("| Bubble Sort    |   ");
 					break;
 			
-			case 2: fprintf(output,"\n\n\nSorted array using Selection Sort Algorithm\n");
+			case 2: fprintf(output,"\n\n\n\tSorted array using Selection Sort Algorithm\n");
 					start = clock();
 					selectionSort(sortedArr, N, 4);
 					end = clock();
@@ -107,11 +101,10 @@ int main(){
 					selectionSort(sortedArr, N, 5);
 					end1 = clock();
 					
-					copyToFile(sortedArr, 4, N, output);
 					printf("| Selection Sort |   ");
 					break;
 					
-			case 3: fprintf(output,"\n\n\nSorted array using Merge Sort Algorithm\n");
+			case 3: fprintf(output,"\n\n\n\tSorted array using Merge Sort Algorithm\n");
 					start = clock();
 					MergeSort(sortedArr, 0, N-1, 6);
 					end = clock();
@@ -120,11 +113,10 @@ int main(){
 					MergeSort(sortedArr, 0, N-1, 7);
 					end1 = clock();
 					
-					copyToFile(sortedArr, 6, N, output);
 					printf("| Merge Sort     |   ");
 					break;
 					
-			case 4: fprintf(output,"\n\n\nSorted array using Heap Sort Algorithm\n");
+			case 4: fprintf(output,"\n\n\n\tSorted array using Heap Sort Algorithm\n");
 					start = clock();
 					heapSort(sortedArr, N, 8);
 					end = clock();
@@ -133,11 +125,10 @@ int main(){
 					heapSort(sortedArr, N, 9);
 					end1 = clock();
 					
-					copyToFile(sortedArr, 8, N, output);
 					printf("| Heap Sort      |   ");
 					break;
 					
-			case 5: fprintf(output,"\n\n\nSorted array using QuickSort Algorithm\n");
+			case 5: fprintf(output,"\n\n\n\tSorted array using QuickSort Algorithm\n");
 					start = clock();
 					quickSort(sortedArr, 0, N-1, 10);
 					end = clock();
@@ -146,26 +137,26 @@ int main(){
 					quickSort(sortedArr, 0, N-1, 11);
 					end1 = clock();
 					
-					
-					copyToFile(sortedArr, 10, N, output);
 					printf("| Quicksort      |   ");
 					break;
 					
 		}
+		copyToFile(sortedArr, i*2, N, output);			//prints the sorted array to the output file
+		
 		cpu_time_used = ((double) (end - start))/ CLOCKS_PER_SEC; 
-		runningTime[2*i] = cpu_time_used;
-		printf("\t   %.10f \t  |", runningTime[2*i]);
+		printf("\t   %.10lf \t  |", cpu_time_used);
+		
+		cpu_time_used = 0;
 		
 		cpu_time_used = ((double) (end1 - start1))/ CLOCKS_PER_SEC; 
-		runningTime[2*i+1] = cpu_time_used;
-		printf("\t\t   %.10f \t   |", runningTime[2*i+1]);
+		printf("\t\t   %.10lf \t   |", cpu_time_used);
 		
 		printIsSorted(sortedArr, N, 2*i, 2*i+1);
 		printf("* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * \n");
 
 		
  }
-	
+	fclose(output);
 	free(unsortedArr);
 	free(randomSortedArr);
 	free(sortedArr);
@@ -175,7 +166,7 @@ int main(){
 }
 
 void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output){
-	
+			//prints the two generated arrays to the output file
 	int i, j;
 	
 	for (i=k; i<k+2; i++){
@@ -196,9 +187,9 @@ void copyToFile(unsigned long int (*sortedArr)[12], int k, int N, FILE* output){
 
 
 void generateValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, int x){
-	// the function generates random values for "unsortArr" and intializes the "randomSortArr" with values that are already sorted in increasing order. the maximum posible valie for each element in "unsortedArr" is set to the maximum value that can  be stored in 'unsigned long int'. The 'srand' function is a rndom number generatir, and the for loop is used to fill arrays with random or sorted values depending on the array.
+	//The function generates both random values and a sorted array
 	int i;
-	unsigned long int max = ULONG_MAX;
+	unsigned long int max = ULONG_MAX;		//ULONG_MAX refers to the maximum value of unsigned long int
 	
 	srand((unsigned long int)(time(NULL)));
 	for(i=0; i<N; i++){
@@ -210,7 +201,7 @@ void generateValues(unsigned long int (*unsortedArr), unsigned long int (*random
 }
 
 void copyGeneratedValues(unsigned long int (*unsortedArr), unsigned long int (*randomSortedArr), int N, FILE *output){
-	// in this code it calls on two arrays "unsortedArr" and "randomSortArr", the integer N, and the file pointer output. this function prints the elements from the "unsortArr" and randomSortArr" arrays to output 50 elements per line. 
+	//prints the values of the two arrays to the output file
 	int i;
 	fprintf(output, "\n\nRandom generated values\n\n");
 	for(i=1; i<N+1; i++){
@@ -306,10 +297,15 @@ void quickSort(unsigned long int (*sortedArr)[12], int low, int high, int index)
 
 void median(unsigned long int (*sortedArr)[12], int low, int high, int index){
 	
-	unsigned long int left = sortedArr[low][index];
+	//This function determines the median of the array for it to be used as the pivot for the quicksort
+	
+	//It gets the value of the first index, last index, and the middle index
+	//Then finds the median of the three
+    unsigned long int left = sortedArr[low][index];
     unsigned long int right = sortedArr[high][index];
     unsigned long int mid = sortedArr[(high + low)/2][index];
     
+	
     if((left>=right && left<=mid)||(left>=mid && left<=right)){
     	swap(&sortedArr[low][index], &sortedArr[high][index]);
 	}
@@ -324,10 +320,10 @@ void median(unsigned long int (*sortedArr)[12], int low, int high, int index){
 
 
 int partition(unsigned long int (*sortedArr)[12], int low, int high, int index) {
-    // in this function we will need use a pivot to determine the median. the median will be used to compare whether its in the lower or higher part of the array
-    median(sortedArr, low, high, index);			//finds the median, swapped it to the last index, and use it to be the pivot
+    
+    median(sortedArr, low, high, index);			
 	
-	unsigned long int pivot = sortedArr[high][index];
+    unsigned long int pivot = sortedArr[high][index];
 	
 	
     int i = low - 1;
@@ -466,17 +462,18 @@ void heapify(unsigned long int (*sortedArr)[12], int N, int i, int index){
 }
 
 int isSorted(unsigned long int (*sortedArr)[12], int N, int index){
+	
+	//Checks the sorted array if it is sorted or not
 	unsigned long int largest = sortedArr[0][index];
 	int i;
 	for(i=1; i<N; i++){
 		if(largest<=sortedArr[i][index])
 			largest = sortedArr[i][index];
 		else
-			return 0;
+			return 0;		//if not sorted
 	}
 	
 	return 1;
-	// the function of this code takes 2D array's of unsigned long integers, the number if elements un the sub array, and an index of the element. the function returns 1 if the sub array is sorted in a non descending order based on the given element and if not it returns 0.
 }
 
 void printIsSorted(unsigned long int (*sortedArr)[12], int N, int index, int index1){
