@@ -1,5 +1,5 @@
 
-# CS111_project
+# Running Time Analysis of Different Sorting Algorithms
 
 Analysis of the six sorting algorithms. With the number of integers:
 
